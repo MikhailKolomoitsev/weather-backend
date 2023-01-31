@@ -1,8 +1,40 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import 'array-flat-polyfill';
+import morgan from 'morgan';
+import { join } from 'path';
 import { AppModule } from './app.module';
+import { configService } from './config.service';
+
+const { PORT } = configService.getAppConfig();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  await app.listen(3000);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    logger: ['error', 'warn', 'debug'],
+    cors: false,
+  });
+
+  app.useGlobalPipes(new ValidationPipe());
+
+  app.use(
+    morgan('tiny', {
+      skip: (req, res) => res.statusCode < 400,
+    }),
+  );
+
+  app.useStaticAssets(join(__dirname, '..', '..', 'client'));
+
+  console.log('CLIENT_HOST', configService.getAppConfig().clientHost);
+
+  app.enableCors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'],
+  });
+
+  app.setGlobalPrefix('/api');
+
+  await app.listen(PORT);
 }
+
 bootstrap();

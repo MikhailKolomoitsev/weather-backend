@@ -39,7 +39,6 @@ services:
     entrypoint: >
       /bin/sh -c "
         /usr/bin/mc config host add myminio http://minio:9000 access_key secret_key;
-        /usr/bin/mc mb --ignore-existing myminio/anadea-hakaton;
         exit 0;
       "
 

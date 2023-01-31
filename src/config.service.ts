@@ -38,8 +38,14 @@ class ConfigService {
 
   public getTypeOrmConfig(): TypeOrmModuleOptions {
     const options = {
+      isGlobal: true,
       type: 'postgres',
-      url: this.getValue('DATABASE_URL'),
+      port: this.env['POSTGRES_PORT']
+        ? parseInt(this.env['POSTGRES_PORT'])
+        : 5432,
+      username: this.getValue('POSTGRES_USER'),
+      database: this.getValue('POSTGRES_DB'),
+      password: this.getValue('POSTGRES_PASSWORD'),
       synchronize: false,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       migrations: [__dirname + '/migrations/*{.ts,.js}'],
@@ -61,7 +67,12 @@ class ConfigService {
   getDataSourceConfig() {
     const options: DataSourceOptions = {
       type: 'postgres',
-      url: this.getValue('DATABASE_URL'),
+      port: this.env['POSTGRES_PORT']
+        ? parseInt(this.env['POSTGRES_PORT'])
+        : 5432,
+      username: this.getValue('POSTGRES_USER'),
+      database: this.getValue('POSTGRES_DB'),
+      password: this.getValue('POSTGRES_PASSWORD'),
       synchronize: false,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       migrations: [__dirname + '/migrations/*{.ts,.js}'],
@@ -74,6 +85,11 @@ class ConfigService {
 
     return options;
   }
+
+  getGoogleConfig = () => ({
+    clientId: this.getValue('GOOGLE_CLIENT_ID'),
+    secret: this.getValue('GOOGLE_SECRET'),
+  });
 
   getAppConfig = () => ({
     clientHost: this.getValue('CLIENT_HOST'),
@@ -89,6 +105,11 @@ class ConfigService {
 
 const configService = new ConfigService(process.env).ensureValues([
   'DATABASE_URL',
+
+  'GOOGLE_CLIENT_ID',
+  'GOOGLE_SECRET',
+  'CLIENT_HOST',
+  'DOMAIN',
 
   'JWT_ACCESS_TOKEN_SECRET',
   'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
