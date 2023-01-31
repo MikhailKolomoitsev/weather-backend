@@ -2,10 +2,12 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import 'array-flat-polyfill';
-import morgan from 'morgan';
 import { join } from 'path';
 import { AppModule } from './app.module';
 import { configService } from './config.service';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const logger = require('morgan');
 
 const { PORT } = configService.getAppConfig();
 
@@ -17,12 +19,6 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
 
-  app.use(
-    morgan('tiny', {
-      skip: (req, res) => res.statusCode < 400,
-    }),
-  );
-
   app.useStaticAssets(join(__dirname, '..', '..', 'client'));
 
   console.log('CLIENT_HOST', configService.getAppConfig().clientHost);
@@ -33,6 +29,8 @@ async function bootstrap() {
   });
 
   app.setGlobalPrefix('/api');
+
+  app.use(logger('combined'));
 
   await app.listen(PORT);
 }
