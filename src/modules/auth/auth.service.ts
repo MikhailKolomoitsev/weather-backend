@@ -27,9 +27,7 @@ export class AuthService {
       const { email } = req.user;
       let user = await this.usersRepository.findOneBy({ email });
       if (!user) {
-        user = await this.usersService.createUser({
-          ...req.user,
-        });
+        user = await this.usersService.createUser(email);
       }
       return {
         token: this.getJwtToken(user.id),

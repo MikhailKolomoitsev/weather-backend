@@ -28,4 +28,19 @@ export class UsersService {
       throw new BadRequestException(error.message);
     }
   }
+
+  async getProfile(email: string) {
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { email },
+        relations: {
+          cities: true,
+        },
+      });
+
+      return user;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
 }
