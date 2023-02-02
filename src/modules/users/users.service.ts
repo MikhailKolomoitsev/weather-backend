@@ -22,6 +22,9 @@ export class UsersService {
   }
 
   async getById(id: string) {
+    if (!id) {
+      return null;
+    }
     try {
       return await this.usersRepository.findOne({ where: { id } });
     } catch (error) {

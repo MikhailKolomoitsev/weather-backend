@@ -18,8 +18,8 @@ export class Guard extends AuthGuard('jwt') {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const http = context.switchToHttp();
     const request = http.getRequest<Request>();
-    const token = request.headers['authorization']?.split?.('Bearer ')[1];
-
+    if (!request?.headers['authorization']) return true;
+    const token = request?.headers['authorization']?.split?.('Bearer ')[1];
     const { userId } = await this.authService.verifyToken(token);
     const user = await this.usersService.getById(userId);
     request['user'] = user;
