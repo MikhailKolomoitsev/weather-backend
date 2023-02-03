@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post } from '@nestjs/common';
 import { CurrentUser } from '../../decorators/current-user.decorator';
 import { UserEntity } from '../users/entities/users.entity';
 import { CitiesService } from './cities.service';
@@ -11,5 +11,10 @@ export class CitiesController {
   @Post()
   createUsersCity(@Body() dto: CreateCityDto, @CurrentUser() user: UserEntity) {
     return this.citiesCervice.createUsersCity(dto, user);
+  }
+
+  @Delete(':id')
+  deleteCity(@Param('id') id: string) {
+    return this.citiesCervice.deleteCity(id);
   }
 }

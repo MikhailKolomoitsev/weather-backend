@@ -20,4 +20,13 @@ export class CitiesService {
       throw new BadRequestException(error.message);
     }
   }
+
+  async deleteCity(id: string) {
+    try {
+      await this.citiesRepository.delete(id);
+      return `City with id ${id} was deleted`;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
 }
